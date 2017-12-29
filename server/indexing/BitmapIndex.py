@@ -12,7 +12,7 @@ from server.query import Table
 
 class BitmapIndex:
 
-    def __init__(self, initial_bitstring_pairs, initial_record_pairs, block_size = 4):
+    def __init__(self, initial_bitstring_pairs, initial_record_pairs, block_size = 100):
 
         self.bitstringTree = BTree(block_size, initial_bitstring_pairs, False)
         self.recordsTree = BTree(block_size, initial_record_pairs, False)
@@ -71,6 +71,31 @@ class BitmapIndex:
 
         return index
 
+
+    def index_to_index_op(self, other, operator, negated, left_transformer, right_transformer, left_index, right_index):
+        if (operator == '=' and not negated) or (operator == '<>' and negated):
+            yield from self.index_equals_index(other, left_transformer, right_transformer)
+        else:
+            # For each key values pair in right_index
+            right_items = [(k, vs) for k, vs in other.items()]
+            for k, b_entry in right_items:
+                # Transform key if column was given math requirements ie S.a + 5
+                k = right_transformer(k)
+                record_list = b_entry.record_list
+
+                # Get the row pairs that satisfy for each table's column
+                left_rows = self.op(k, operator, negated)
+                if left_index <= right_index:
+
+                    for lr in left_rows:
+                        for record in record_list:
+                            yield (lr, other.recordsTree[record])
+                else:
+                    for record in record_list:
+                        for lr in left_rows:
+                            yield (other.recordsTree[record], lr)
+
+
     def index_equals_index(self, other, left_transformer, right_transformer):
         # Consider all matching keys in each index
         val1, block1 = self.bitstringTree.get_with_block(self.btree.smallest)
@@ -107,8 +132,11 @@ class BitmapIndex:
 
             # If the keys are equal, yield the cartesian product of their values
             if k1 == k2:
+                # Get bitmap_entry for each key, then pull the record numbers
                 bentry1 = block1.values[k1].populate_record_list()
                 bentry2 = block2.values[k2].populate_record_list()
+
+                # Make a tuple for every possible pair
                 for v1 in bentry1:
                     mem1 = larger_index.recordsTree[v1]
                     for v2 in bentry2:
