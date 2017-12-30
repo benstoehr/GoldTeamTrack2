@@ -39,6 +39,9 @@ More info on how to use the client to come (including help statements and exampl
 
 ## Server Database System
 
+Track 2 Report:
+https://docs.google.com/document/d/1Pz3YGWHxcsylxXBmNjMhEXPOZ35UStkSn2Y271ej0Jc/edit?usp=sharing
+
 Server-side, query execution is handled by `Hangman`. The `Hangman.execute` method accepts the SQL query string. It calls the necessary methods to execute the query processing pipeline, wrapping each call in a timing method that prints to the server's stdout. The result of the query is returned in the response from flask to the client.
 
 The query execution pipeline includes a `QueryParser` that parses the query and validates the presence of each table and column referenced in the query. After parsing the query with `QueryParser.parse_select_from_where`, we pass the tables, columns, where_conditions, and join_conditions to the `QueryOptimizer`, where we determine the order that we will join tables and reduce the where_conditions algebraically. The output from the `QueryOptimizer` is passed into the `QueryFacade` to join the tables (using pandas) and select rows according to the conditions. Conditions are checked according to the index for a column. We have two different types of indexes `BitmapIndex` and `BTreeIndex`. Originally, we only had the `BTreeIndex`, but `BitmapIndex` was added in order to support faster partial matching. Indexes are loaded and managed by the `TableIndexer` object, which automatically creates, loads, and saves indexes as needed by the `QueryFacade`.
