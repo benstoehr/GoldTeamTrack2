@@ -37,7 +37,7 @@ virtual environment with virtualenv. To do so, open up a bash terminal and follo
     
         sudo pip install virtualenv
         
-    Otherwise, refer to[how to install virtualenv on your system](https://virtualenv.pypa.io/en/stable/installation/).
+    Otherwise, refer to [how to install virtualenv on your system](https://virtualenv.pypa.io/en/stable/installation/).
 
 2. Create the project-specific virtual environment:
 
@@ -122,22 +122,28 @@ Commands:
 
 #### ...and some Invalid Queries
 
-1. 
+1. Bad:
+
         (Cmd) query "SELECT * FROM movies"    
     ***Why:*** *Don't put your SELECT query in quotes.*
-2.
+2. Bad:
+
         (Cmd) query SELECT M.title_name FROM movies M WHERE M.movie_title = 'Avatar'
     ***Why:*** *Use double quotes, not single quotes.*
-3. 
+3. Bad:
+
         (Cmd) query GIVE me EVERY tuple IN movies
     ***Why:*** *Invalid SQL.*
-4. 
+4. Bad:
+
         (Cmd) query SELECT * FROM ./data/movies.csv
     ***Why:*** *Refer to filenames by just their table name. This one should be just* `movies`
-5. 
+5. Bad:
+
         (Cmd) query SELECT * FROM business B JOIN review50k R ON B.business_id = R.business_id
     ***Why:*** *Join conditions must be in parenthesis.*
-6. 
+6. Bad:
+
         (Cmd) query SELECT * FROM business B JOIN review-50k R ON B.business_id = R.business_id
     ***Why:*** *Tablenames must not have a*`-` *. Rename the file so that it does not have a dash.*
 
@@ -147,7 +153,7 @@ The first time you run a query over a table, or a column of a table, that you ha
 the system will generate index and other pre-processing files (storing them in `./data`).  This will potentially take a
 long time - sometimes several minutes. **This is normal.**
 
-Each subsequent query over that table or column of a table will be*significantly*faster, so long as those index files 
+Each subsequent query over that table or column of a table will be *significantly* faster, so long as those index files 
 remain in the `./data` directory.
 
 ## Troubleshooting
@@ -157,8 +163,7 @@ If you experience errors, try restarting the Server and Client. Also try deletin
 
 ## The Server Database System
 
-Full Track 2 Report:
-https://docs.google.com/document/d/1Pz3YGWHxcsylxXBmNjMhEXPOZ35UStkSn2Y271ej0Jc/edit?usp=sharing
+[Full Track 2 Report](https://docs.google.com/document/d/1Pz3YGWHxcsylxXBmNjMhEXPOZ35UStkSn2Y271ej0Jc/edit?usp=sharing)
 
 Server-side, query execution is handled by `Hangman`. The `Hangman.execute` method accepts the SQL query string. It 
 calls the necessary methods to execute the query processing pipeline, wrapping each call in a timing method that prints 
@@ -175,10 +180,10 @@ loaded and managed by the `TableIndexer` object, which automatically creates, lo
 `QueryFacade`.
 
 ## Libraries
-* python.http.client
-* python.concurrent
-* python.cmd
-* https://github.com/andialbrecht/sqlparse
-* https://pandas.pydata.org/
-* http://flask.pocoo.org/
 
+* [Flask](http://flask.pocoo.org/) - framework for the Server
+* [SQLParse](https://github.com/andialbrecht/sqlparse) - for parsing SQL in the Parser
+* [Python.cmd](https://docs.python.org/3/library/cmd.html) - for the REPL in the Client
+* [Python.requests](http://docs.python-requests.org/en/master/) - for composing HTTP requests in the Client
+* [Python.time](https://docs.python.org/3/library/time.html?highlight=time#module-time) - for timing execution
+* [Python.dateutil](https://dateutil.readthedocs.io/en/stable/) - for parsing dates
