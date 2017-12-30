@@ -157,6 +157,9 @@ If you experience errors, try restarting the Server and Client. Also try deletin
 
 ## The Server Database System
 
+Full Track 2 Report:
+https://docs.google.com/document/d/1Pz3YGWHxcsylxXBmNjMhEXPOZ35UStkSn2Y271ej0Jc/edit?usp=sharing
+
 Server-side, query execution is handled by `Hangman`. The `Hangman.execute` method accepts the SQL query string. It 
 calls the necessary methods to execute the query processing pipeline, wrapping each call in a timing method that prints 
 to the server's stdout. The result of the query is returned in the response from flask to the client.
