@@ -4,19 +4,22 @@ import math
 class Bitmap_Entry:
 
 
-    def __init__(self, key, record_number):
+    def __init__(self, key, record_number, mem_loc):
 
         self.key = key
         self.record_list = []
         self.record_list.append(record_number)
+        #self.mem_list = []
+        #self.mem_list.append(mem_loc)
         self.compressed_bitstring = ""
         self._int = 0
 
     def __repr__(self):
         return str(self.record_list)
 
-    def append(self, record_number):
+    def append(self, record_number, mem_loc):
         self.record_list.append(record_number)
+        #self.mem_list.append(mem_loc)
 
     def encode_compressed_bitstring(self):
 
@@ -32,10 +35,12 @@ class Bitmap_Entry:
             bitstring += "{0:b}".format(difference)
 
         self.compressed_bitstring = bitstring
-        self._int = int(bitstring,2)
+        #self._int = int(bitstring,2)
+        self.record_list = []
 
     def decode_compressed_string(self, n):
 
+        #compressed = "{0:b}".format(self._int)
         compressed = self.compressed_bitstring
         string = ""
 
@@ -67,9 +72,10 @@ class Bitmap_Entry:
 
     def populate_record_list(self):
 
+        #compressed = "{0:b}".format(self._int)
         compressed = self.compressed_bitstring
-        print("compressed")
-        print(compressed)
+        # print("compressed")
+        # print(compressed)
 
         new_record_list = []
 
@@ -80,11 +86,6 @@ class Bitmap_Entry:
             space = int(str(compressed[:num_bits]), 2)
 
             print("space: " + str(space))
-            # if(len(self.record_list) == 0):
-            #     self.record_list.append(space+1)
-            # else:
-            #     self.record_list.append(self.record_list[-1]+space+1)
-
 
             if (len(new_record_list) == 0):
                 new_record_list.append(space)
