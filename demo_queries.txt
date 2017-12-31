@@ -4,3 +4,18 @@ SELECT B.name, B.postal_code, R.review_id, R.stars, R.useful FROM business B JOI
 
 SELECT DISTINCT B.name FROM business B JOIN review1m R JOIN photos P ON (B.business_id = R.business_id AND B.business_id = P.business_id) WHERE B.city = "Champaign" AND B.state = "IL" AND R.stars = 5 AND P.label = "inside"
 
+////////////////////////////////////////////////
+
+SELECT R.review_id, R.funny, R.useful FROM review1m R WHERE R.funny >= 20 AND R.useful > 30 
+
+SELECT B.name, B.city, B.state FROM business B WHERE B.city = "Champaign" AND B.state = "IL"
+
+SELECT B.name, B.postal_code, R.stars, R.useful FROM business B JOIN review1m R ON (B.business_id = R.business_id) WHERE B.name = "Sushi Ichiban" AND B.postal_code = "61820"
+
+SELECT R1.user_id, R2.user_id, R1.stars, R2.stars FROM review1m R1 JOIN review1m R2 ON (R1.business_id = R2.business_id) WHERE R1.stars = 5 AND R2.stars = 1 AND R1.useful > 50 AND R2.useful > 50
+
+SELECT B.name, B.city, B.state, R.stars, P.label FROM business B JOIN review1m R JOIN photos P ON (B.business_id = R.business_id AND B.business_id = P.business_id) WHERE B.city = "Champaign" AND B.state = "IL" AND R.stars = 5 AND P.label = "inside"
+
+SELECT B.name, R1.user_id, R2.user_id FROM business B JOIN review1m R1 JOIN review1m R2 ON (B.business_id = R1.business_id AND R1.business_id = R2.business_id) WHERE R1.stars = 5 AND R2.stars = 1 AND R1.useful > 50 AND R2.useful > 50
+
+
