@@ -3,7 +3,6 @@ import sqlparse
 from server.query.Column import Column
 from server.query.Comparison import Comparison
 from server.query.SQLParsingError import SQLParsingError
-from server.query.Join import *
 from server.query.Table import Table
 
 LOG = False
@@ -341,14 +340,6 @@ class Parser:
             idx = self.consume_on(stmt, idx, has_join)
 
         return idx
-
-    def list_to_Join(self, table_list):
-        if not table_list:
-            raise ValueError("List must have at least one element.")
-        elif len(table_list) == 1:
-            return SingletonJoin(table_list[0])
-        else:
-            return Join(SingletonJoin(table_list[0]), JoinType.CROSS, self.list_to_Join(table_list[1:]))
 
     def consume_where(self, stmt, idx):
         """

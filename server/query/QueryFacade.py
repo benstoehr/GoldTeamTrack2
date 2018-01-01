@@ -46,7 +46,7 @@ class QueryFacade:
         tbl = col.table
         return self._table_indices[repr(tbl)].column_indices[col.name]
 
-    def execute_plan(self, cols, tbls, conds):
+    def execute_plan(self, conds):
         """
         Executes a QueryPlan and returns a list of list of row start locations
 
@@ -67,9 +67,9 @@ class QueryFacade:
             # There are no conditions get all rows
             # Use the first column to get all of the row locations from an index
             tbl_rows = []
-            for tbl in tbls:
+            for tbl in self._tables:
                 tbl_rows.append(self._table_indices[repr(tbl)].mem_locs)
-            result = ResultGenerator(len(tbls), self.get_mem_locs(), [table.filename for table in self._tables])
+            result = ResultGenerator(len(self._tables), self.get_mem_locs(), [table.filename for table in self._tables])
             return result.generate_tuples()
         else:
             # Handle queries with conditions
