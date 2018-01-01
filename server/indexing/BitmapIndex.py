@@ -17,6 +17,7 @@ class BitmapIndex:
         self.bitstringTree = BTree(block_size, initial_bitstring_pairs, False)
         self.recordsTree = BTree(block_size, initial_record_pairs, False)
 
+    # MAKE METHOD TO GENERATE TUPLES OF MEMORY LOCATIONS
     @staticmethod
     def make(pair_generator, table, column_name):
 
@@ -25,6 +26,7 @@ class BitmapIndex:
         initial_bitstring_pairs = {}
         initial_record_pairs = {}
 
+        # CREATE BTREES FOR BITSTRINGS -> RECORD NUMBERS AND RECORD NUMBER -> MEMORY LOCATIONS
         while(len(initial_bitstring_pairs) < 3):
             try:
                 key, mem_location, record_num = next(pair_generator)
@@ -63,6 +65,7 @@ class BitmapIndex:
                     print("Error parsing at location %s for %s in %s" % (mem_location, k, column_name))
                     assert False
 
+                # CHECK TO SEE IF IT ALREADY EXISTS IN THE TREE
                 lookup = index.bitstringTree[k]
                 if lookup:
                     lookup.append(record_num, mem_location)
@@ -78,7 +81,7 @@ class BitmapIndex:
             # All of the rows were consumed before we got here
             pass
 
-        # Return the filled index
+        # Return the index with encoded strings
         for k,bitmap_entry in index.bitstringTree.items():
             bitmap_entry.encode_compressed_bitstring();
 
@@ -96,7 +99,6 @@ class BitmapIndex:
                 k = right_transformer(k)
 
                 record_list = b_entry.record_list
-                #mem_list = b_entry.mem_list
 
                 # Get the row pairs that satisfy for each table's column
                 left_rows = self.op(k, operator, negated)
@@ -105,15 +107,12 @@ class BitmapIndex:
                     for lr in left_rows:
                         for record in record_list:
                             yield (lr, other.recordsTree[record])
-                        # for mem in mem_list:
-                        #     yield (lr, mem)
+
                 else:
                     for record in record_list:
                         for lr in left_rows:
                             yield (other.recordsTree[record], lr)
-                    # for mem in mem_list:
-                    #     for lr in left_rows:
-                    #         yield (mem, lr)
+
 
 
     def index_equals_index(self, other, left_transformer, right_transformer):
@@ -153,27 +152,18 @@ class BitmapIndex:
             # If the keys are equal, yield the cartesian product of their values
             if k1 == k2:
 
-                ## USING RECORD LIST
-                # Get bitmap_entry for each key, then pull the record numbers
-                # bentry1 = block1.values[k1].populate_record_list()
-                # bentry2 = block2.values[k2].populate_record_list()
-                #
-                # # Make a tuple for every possible pair
-                # for v1 in bentry1:
-                #     mem1 = larger_index.recordsTree[v1]
-                #     for v2 in bentry2:
-                #         mem2 = smaller_index.recordsTree[v2]
-                #         yield (mem1, mem2)
-
-                # USING MEM LIST
-                # Get bitmap_entry for each key, then pull the record numbers
-                b_mem1 = block1.values[k1].mem_list
-                b_mem2 = block2.values[k2].mem_list
+                # USING RECORD LIST
+                #Get bitmap_entry for each key, then pull the record numbers
+                bentry1 = block1.values[k1].populate_record_list()
+                bentry2 = block2.values[k2].populate_record_list()
 
                 # Make a tuple for every possible pair
-                for mem1 in b_mem1:
-                    for mem2 in b_mem2:
+                for v1 in bentry1:
+                    mem1 = larger_index.recordsTree[v1]
+                    for v2 in bentry2:
+                        mem2 = smaller_index.recordsTree[v2]
                         yield (mem1, mem2)
+
 
             # Stop if there are no more keys to consider
             if block2 is None:

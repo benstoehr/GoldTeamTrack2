@@ -9,18 +9,18 @@ class Bitmap_Entry:
         self.key = key
         self.record_list = []
         self.record_list.append(record_number)
-        #self.mem_list = []
-        #self.mem_list.append(mem_loc)
         self.compressed_bitstring = ""
         self._int = 0
 
     def __repr__(self):
         return str(self.record_list)
 
+    # METHOD FOR ADDING RECORD NUMBER TO RECORD LIST
     def append(self, record_number, mem_loc):
         self.record_list.append(record_number)
         #self.mem_list.append(mem_loc)
 
+    # METHOD FOR COMPUTING RUN LENGTH ENCODING
     def encode_compressed_bitstring(self):
 
         bitstring = ""
@@ -38,44 +38,35 @@ class Bitmap_Entry:
         #self._int = int(bitstring,2)
         self.record_list = []
 
+    # METHOD TO GET BITSTRING FROM RUN LENGTH ENCODED
     def decode_compressed_string(self, n):
 
-        #compressed = "{0:b}".format(self._int)
         compressed = self.compressed_bitstring
         string = ""
 
         while (len(compressed) > 0):
+
             num_bits = compressed.find("0") + 1
-            # print("Num Bits")
-            # print(num_bits)
+
             compressed = compressed[num_bits:]
-            # print("Compressed")
-            # print(compressed)
 
             space = int(str(compressed[:num_bits]), 2)
 
-            # print("Space")
-            # print(space)
             string += "0" * space
             string += "1"
-            # print("String")
-            # print(string)
 
             compressed = compressed[num_bits:]
-            # print("Compressed")
-            # print(compressed)
 
+        # MAKE SURE ALL STRINGS ARE THE SAME SIZE
         if (len(string) < n):
             string += "0" * (n - len(string))
 
         return string
 
+    # METHOD TO GET A RECORD LIST BACK FROM RUN LENGTH ENCODED STRING
     def populate_record_list(self):
 
-        #compressed = "{0:b}".format(self._int)
         compressed = self.compressed_bitstring
-        # print("compressed")
-        # print(compressed)
 
         new_record_list = []
 
